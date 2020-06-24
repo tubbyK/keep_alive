@@ -1,6 +1,6 @@
 import pyautogui
 import time
-from pynput import  keyboard
+from pynput import keyboard
 
 class keep_alive():
 
@@ -15,16 +15,18 @@ class keep_alive():
         self.keep_going = True
 
     def run(self):
-        while self.keep_going:
+        while True:
             listener = keyboard.Listener(on_release=self.on_release)
             listener.start()
-            self.jitter()
+            if self.keep_going:
+                self.jitter()
 
     def on_release(self, key):
         if key == keyboard.Key.esc:
             # Stop listener
-            self.keep_going = False
-            return False
+            self.keep_going = False if self.keep_going else True
+            print(f'Toggled: {self.keep_going}')
+            # return False
 
     def get_mouse_pos(self):
         self.x_pos, self.y_pos = pyautogui.position()
@@ -41,13 +43,13 @@ class keep_alive():
             self.y_pos = max_y
 
     def jitter(self):
+        x_pos_original, y_pos_original = pyautogui.position()
         self.x_pos, self.y_pos = pyautogui.position()
         self.max_pos()
         pyautogui.click(button='right')
         pyautogui.moveTo(self.x_pos - 40, self.y_pos - 40)
         pyautogui.click()
-        self.x_pos += self.move
-        self.y_pos += self.move
+        pyautogui.moveTo(x_pos_original, y_pos_original)
         time.sleep(self.wait_time)
 
 if __name__ == '__main__':
