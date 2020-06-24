@@ -1,8 +1,10 @@
 import pyautogui
 import time
-
+import threading as th
+import keyboard
 
 class keep_alive():
+    keep_going = True
     def __init__(self, move=100, size_factor=0.8, wait_time=30):
         self.x_pos, self.y_pos = None, None
         self.get_mouse_pos()
@@ -13,9 +15,15 @@ class keep_alive():
         self.wait_time = wait_time
 
     def run(self):
-        while True:
+        th.Thread(target=self.key_capture_thread, args=(), name='key_capture_thread', daemon=True).start()
+        while self.keep_going:
             self.jitter()
             time.sleep(self.wait_time)
+
+    def key_capture_thread(self, key='esc'):
+        a = keyboard.read_key()
+        if a == key:
+            self.keep_going = False
 
     def get_mouse_pos(self):
         self.x_pos, self.y_pos = pyautogui.position()
