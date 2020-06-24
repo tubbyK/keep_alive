@@ -15,9 +15,9 @@ class keep_alive():
         self.keep_going = True
 
     def run(self):
+        listener = keyboard.Listener(on_release=self.on_release)
+        listener.start()
         while True:
-            listener = keyboard.Listener(on_release=self.on_release)
-            listener.start()
             if self.keep_going:
                 self.jitter()
 
@@ -25,8 +25,7 @@ class keep_alive():
         if key == keyboard.Key.esc:
             # Stop listener
             self.keep_going = False if self.keep_going else True
-            print(f'Toggled: {self.keep_going}')
-            # return False
+            print(f'Toggle: {self.keep_going}')
 
     def get_mouse_pos(self):
         self.x_pos, self.y_pos = pyautogui.position()
